@@ -1,0 +1,22 @@
+{
+  "name": "sp-fitler-config",
+  "version": "1.0.3",
+  "description": "安装 node \r 获取网络配置命令 node getconfig\r 修改配置命令 node saveconfig",
+  "main": "getconfig.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "commander": "^5.1.0",
+    "inquirer": "7.1.0",
+    "ora": "4.0.4"
+  },
+  "devDependencies": {},
+  "bin": {
+    "public": "bin/public.js",
+    "public get": "bin/public-get.js",
+    "public save": "bin/public-save.js"
+  }
+}
