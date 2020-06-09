@@ -1,7 +1,7 @@
 /*
  * @Author: wuxunyu
  * @Date: 2020-05-30 10:13:09
- * @LastEditTime: 2020-06-06 15:41:56
+ * @LastEditTime: 2020-06-09 19:45:10
  */
 (function() {
   const {findFatherNodeKey, findTargetChildren } = require(`${__dirname}/../tool/tool`);
@@ -73,13 +73,16 @@
                   }
                 }
               ]).then(input => {
-                saveToLocalCookie(input.authorizationcookie);
+                saveToLocalCookieconfig(input.authorizationcookie);
               });
             }, 'host');
             return;
           }
           return console.log('body:', chalk.redBright(body));
         }
+        COOKIEHOST.platform = [...COOKIEHOST.platform, data.platform];
+        WriteFile(JSON.stringify(COOKIEHOST), '/cookieconfig.json')
+        
         console.log(chalk.greenBright(`${data.platformname}保存成功`))
       });
     }).on('error', function (e) {
@@ -122,7 +125,7 @@
     });
   }
   
-  function saveToLocalCookie({value: cookie, env}) {
+  function saveToLocalCookieconfig({value: cookie, env}) {
     findTargetChildren(COOKIEHOST, env, (key, value) => {
       value.cookie = cookie;
       WriteFile(JSON.stringify(COOKIEHOST), '/cookieconfig.json')
