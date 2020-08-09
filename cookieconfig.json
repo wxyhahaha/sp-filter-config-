@@ -1,1 +1,19 @@
-{"platform":[20,36,65,67,32],"测试":{"cookie":"Authorization=\"Bearer AT-268-TG3UlQojwcIUX088mSTILIGZHVn58kJ5\"","host":"192.168.1.146"},"正式":{"cookie":"4r","host":"apisp.banggood.cn"}}
+{
+    "platform": [
+        20,
+        36,
+        65,
+        67,
+        32
+    ],
+    "测试": {
+        "cookie": "Authorization=\"Bearer AT-268-TG3UlQojwcIUX088mSTILIGZHVn58kJ5\"",
+        "host": "192.168.1.146",
+        "port": "8429"
+    },
+    "正式": {
+        "cookie": "Authorization=\"Bearer AT-85247-EZDUE4zGkemnh428hFmLpf5-3DA9O7GV\"",
+        "host": "apisp.banggood.cn",
+        "port": ""
+    }
+}

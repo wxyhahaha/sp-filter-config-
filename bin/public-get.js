@@ -1,126 +1,109 @@
-/*
- * @Author: wuxunyu
- * @Date: 2020-05-30 10:13:09
- * @LastEditTime: 2020-06-06 15:41:06
- */
-(function () {
-    const { findFatherNodeKey, findTargetChildren } = require(`${__dirname}/../tool/tool`);
-    const http = require("http");
-    const fs = require('fs');
-    const COOKIEHOST = require(`${__dirname}/../cookieconfig.json`);
-    const inquirer = require('inquirer');
-    const chalk = require('chalk');
-    const ora = require('ora');
-    let HOST = '';
-    let COOKIE = "";
-    const promptList = [
-        {
-            type: 'list',
-            message: '请选择获取测试环境还是正式环境:',
-            name: 'env',
-            choices: [`测试(${COOKIEHOST['测试'].host})`, `正式(${COOKIEHOST['正式'].host})`,],
-            filter: (val) => {
-                return val.includes('测试') ? '测试' : '正式'
-            }
-        },
-        {
-            type: 'list',
-            message: '请选择平台:',
-            name: 'platform',
-            choices: COOKIEHOST.platform
-        }
-    ];
-    inquirer.prompt(promptList).then(answers => {
-        COOKIE = COOKIEHOST[answers.env].cookie;
-        HOST = COOKIEHOST[answers.env].host
-        createConfigFile(answers.platform);
-    })
-    function getConfig(platform) {
-        const opt = {
-            host: HOST,
-            port: HOST === '192.168.1.146' ? '8429' : '',   // path为域名时，不加port
-            method: 'GET',
-            path: '/listing/sku_on_sale/get_filter_config?platformCode=' + platform + '&userOaId=-1',
-            headers: {
-                "Content-Type": 'application/json',
-                "Cookie": COOKIE,
-                "platformNo": platform
-            }
-        }
-        let body = '';
-        const spinner = ora(`正在获取${platform}的配置\n`).start();
-        const req = http.request(opt, function (res) {
-            res.on('data', function (data) {
-                body += data;
-            }).on('end', function () {
-                if (!JSON.parse(body).success) {
-                    if (body.includes('401')) {
-                        console.log('body:', chalk.redBright('登录超时，请重新登录'))
-                        findFatherNodeKey(COOKIEHOST, HOST, (key, value) => {
-                            inquirer.prompt([
-                                {
-                                    type: 'input',
-                                    message: `请输入${key}(${value})Authorization cookie:`,
-                                    name: 'authorizationcookie',
-                                    default: "find youself", // 默认值
-                                    filter: (val) => {
-                                        return { value: val, env: key }
-                                    }
-                                }
-                            ]).then(input => {
-                                saveToLocalCookie(input.authorizationcookie);
-                            });
-                        }, 'host');
-                        return;
-                    }
-                    return console.log('body:', chalk.redBright(body));
+
+const Common = require("../tool/common");
+class Get extends Common {
+    constructor() {
+        super();
+        this.platform = '';
+        this.init();
+    }
+    init() {
+        const promptList = [
+            {
+                type: 'list',
+                message: '请选择获取测试环境还是正式环境:',
+                name: 'env',
+                choices: [`测试(${this.COOKIEHOST['测试'].host})`, `正式(${this.COOKIEHOST['正式'].host})`,],
+                filter: (val) => {
+                    return val.includes('测试') ? '测试' : '正式'
                 }
-                if (!JSON.parse(body).result) {
-                    return console.log(chalk.redBright('配置为空'));
-                }
-                WriteFile(JSON.parse(body).result);
-            });
-        }).on('error', function (e) {
-            console.log("error: " + e.message);
+            },
+            {
+                type: 'list',
+                message: '请选择平台:',
+                name: 'platform',
+                choices: this.COOKIEHOST.platform
+            }
+        ];
+        this.inquirer.prompt(promptList).then(answers => {
+            this.ENV = answers.env;
+            this.COOKIE = this.COOKIEHOST[answers.env].cookie;
+            this.PORT = this.COOKIEHOST[answers.env].port;
+            this.HOST = this.COOKIEHOST[answers.env].host
+            this.platform = answers.platform;
+            this.createConfigFile();
         })
-        req.end();
-        spinner.stop();
     }
 
-    function WriteFile(data) {
-        mkdir();
+    async writeJsonFile(data) {
+        if (!this.isExistsJson()) {
+            this.fs.mkdirSync(`${process.cwd()}/json`)
+        }
         if (JSON.parse(data).platformname) {
-            fs.writeFile(`${process.cwd()}/json/${JSON.parse(data).platformname}-config.json`, data, null, function (err) {
-                if (err) {
-                    throw err;
-                }
-                console.log(chalk.green(`${JSON.parse(data).platformname}-config.json 创建成功`));
-            });
+            const res = await this.writeFile(data, `${JSON.parse(data).platformname}-config.json`);
+            if (res) {
+                console.log(this.chalk.green(`${JSON.parse(data).platformname}-config.json 创建成功`));
+            }
         } else {
-            console.error(chalk.redBright(`${JSON.parse(data).platform}对应没有平台名，创建失败`));
+            console.error(this.chalk.redBright(`${JSON.parse(data).platform}对应没有平台名，创建失败`));
+        }
+    };
+
+    async createConfigFile() {
+        const res = await this.getConfig();
+        if (res == 401) {
+            console.log('body:', this.chalk.redBright('登录超时，请重新登录'));
+            this.inputCustomerCookie();
+        } else {
+            this.writeJsonFile(res);
         }
     }
 
-    function createConfigFile(platform) {
-        getConfig(platform);
-    }
+    async getConfig() {
+        return await this.request();
+    } 
 
-    function saveToLocalCookie({ value: cookie, env }) {
-        findTargetChildren(COOKIEHOST, env, (key, value) => {
-            value.cookie = cookie;
-            fs.writeFile(`${__dirname}/../cookieconfig.json`, JSON.stringify(COOKIEHOST), null, function (err) {
-                if (err) {
-                    throw err;
+    request() {
+        const platform = this.platform;
+        return new Promise(resolve => {
+            const opt = {
+                host: this.HOST,
+                port: this.PORT,   // path为域名时，不加port
+                method: 'GET',
+                path: '/listing/sku_on_sale/get_filter_config?platformCode=' + platform + '&userOaId=-1',
+                headers: {
+                    "Content-Type": 'application/json',
+                    "Cookie": this.COOKIE,
+                    "platformNo": platform
                 }
-            });
-        })
+            }
+            let body = '';
+            const spinner = this.ora(this.chalk.blue(`正在获取平台${platform}的配置\n`)).start();
+            const req = this.http.request(opt, (res) => {
+                res.on('data', (data) => {
+                    body += data;
+                }).on('end', async () => {
+                    if (!JSON.parse(body).success) {
+                        if (body.includes('401')) {
+                            spinner.stop();
+                            resolve(401);
+                            return;
+                        }
+                        return console.log('body:', this.chalk.redBright(body));
+                    }
+                    if (!JSON.parse(body).result) {
+                        return console.log(this.chalk.redBright('配置为空'));
+                    }
+                    resolve(JSON.parse(body).result);
+                    spinner.stop();
+                });
+            }).on('error', (e) => {
+                console.log("error: " + e.message);
+                spinner.stop();
+            })
+            req.end();
+        });
     }
+}
 
-    function isExistsJson() {
-        return fs.existsSync(`${process.cwd()}/json`)
-    }
-
-    function mkdir() {
-        isExistsJson() ? '' : fs.mkdirSync(`${process.cwd()}/json`);
-    }
-})();
+new Get();
+module.exports = Get;
