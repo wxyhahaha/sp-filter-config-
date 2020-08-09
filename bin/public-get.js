@@ -39,7 +39,7 @@ class Get extends Common {
             this.fs.mkdirSync(`${process.cwd()}/json`)
         }
         if (JSON.parse(data).platformname) {
-            const res = await this.writeFile(data, `${JSON.parse(data).platformname}-config.json`);
+            const res = await this.writeFile(data, `/json/${JSON.parse(data).platformname}-config.json`);
             if (res) {
                 console.log(this.chalk.green(`${JSON.parse(data).platformname}-config.json 创建成功`));
             }

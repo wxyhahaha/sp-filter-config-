@@ -20,7 +20,7 @@ class Common {
 
     writeFile(data, path) {
         return new Promise((resolve, reject) => {
-            this.fs.writeFile(`${process.cwd()}/..${path}`, data, null, (err) => {
+            this.fs.writeFile(`${process.cwd()}/${path}`, data, null, (err) => {
                 if (err) {
                     reject(err);
                     throw err;
