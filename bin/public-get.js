@@ -97,8 +97,8 @@ class Get extends Common {
                     spinner.stop();
                 });
             }).on('error', (e) => {
-                console.log("error: " + e.message);
                 spinner.stop();
+                console.log("error: " + e.message);
             })
             req.end();
         });
