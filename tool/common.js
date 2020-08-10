@@ -1,7 +1,7 @@
 const http = require("http");
 const fs = require("fs");
 const inquirer = require('inquirer');
-const COOKIEHOST = require(`${__dirname}/../cookieconfig.json`);
+const COOKIEHOST = require(`${process.cwd()}/cookieconfig.json`);
 const chalk = require('chalk');
 const ora = require('ora');
 class Common {
@@ -43,14 +43,16 @@ class Common {
                 default: "find youself" // 默认值
             }
         ]).then(async (input) => {
-            this.writeCookie(input.authorizationcookie);
+            console.log(input.authorizationcookie);
+            await this.writeCookie(input.authorizationcookie);
+            this.COOKIEHOST = require(`${process.cwd()}/cookieconfig.json`);
             this.init();
         });
     }
 
-    writeCookie(cookie) {
+    async writeCookie(cookie) {
         this.COOKIEHOST[this.ENV].cookie = cookie;
-        this.writeFile(JSON.stringify(this.COOKIEHOST), '/cookieconfig.json');
+        await this.writeFile(JSON.stringify(this.COOKIEHOST), '/cookieconfig.json');
     }
 }
 

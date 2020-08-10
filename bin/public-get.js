@@ -4,7 +4,6 @@ class Get extends Common {
     constructor() {
         super();
         this.platform = '';
-        this.init();
     }
     init() {
         const promptList = [
@@ -105,5 +104,4 @@ class Get extends Common {
     }
 }
 
-new Get();
-module.exports = Get;
+module.exports = new Get();

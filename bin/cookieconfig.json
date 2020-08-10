@@ -1,0 +1,22 @@
+{
+  "platform": [
+    20,
+    36,
+    65,
+    67,
+    32,
+    27,
+    29,
+    63
+  ],
+  "测试": {
+    "cookie": "sdsads",
+    "host": "192.168.1.146",
+    "port": "8429"
+  },
+  "正式": {
+    "cookie": "Authorization=\"Bearer AT-97779-RHBtflbxufvOtz1gaqxt0HBQELLj9rIW\"",
+    "host": "apisp.banggood.cn",
+    "port": ""
+  }
+}

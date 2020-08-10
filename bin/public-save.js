@@ -4,7 +4,6 @@ class Save extends Common {
   ) {
     super();
     this.data = {};
-    this.init();
   }
 
   async init() {
@@ -121,11 +120,11 @@ class Save extends Common {
   writePlatFormNo(platformNo) {
     if (!this.COOKIEHOST.platform.includes(platformNo)) {
       this.COOKIEHOST.platform = [... this.COOKIEHOST.platform, platformNo];
-      this.WriteFile(JSON.stringify(this.COOKIEHOST), '/cookieconfig.json')
+      this.writeFile(JSON.stringify(this.COOKIEHOST), '/cookieconfig.json')
     }
   }
 }
-new Save();
-module.exports = Save;
+
+module.exports = new Save();
 
 
