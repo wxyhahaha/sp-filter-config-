@@ -1,7 +1,7 @@
 const http = require("http");
 const fs = require("fs");
 const inquirer = require('inquirer');
-const COOKIEHOST = require(`${process.cwd()}/cookieconfig.json`);
+const COOKIEHOST = require(`${process.cwd()}/filter-cookie-config.json`);
 const chalk = require('chalk');
 const ora = require('ora');
 class Common {
@@ -45,14 +45,14 @@ class Common {
         ]).then(async (input) => {
             console.log(input.authorizationcookie);
             await this.writeCookie(input.authorizationcookie);
-            this.COOKIEHOST = require(`${process.cwd()}/cookieconfig.json`);
+            this.COOKIEHOST = require(`${process.cwd()}/filter-cookie-config.json`);
             this.init();
         });
     }
 
     async writeCookie(cookie) {
         this.COOKIEHOST[this.ENV].cookie = cookie;
-        await this.writeFile(JSON.stringify(this.COOKIEHOST), '/cookieconfig.json');
+        await this.writeFile(JSON.stringify(this.COOKIEHOST), '/filter-cookie-config.json');
     }
 }
 
