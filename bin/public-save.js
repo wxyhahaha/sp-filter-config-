@@ -33,8 +33,7 @@ class Save extends Common {
       this.PORT = this.COOKIEHOST[answers.env].port;
       this.PUTPATH = this.COOKIEHOST.outPut.replace('{env}', `${this.ENV}`);
       this.data = await this.getLocalConfig(answers.platformName);
-      console.log(this.data);
-      // this.saveConfig();
+      this.saveConfig();
     })
   }
 
@@ -45,7 +44,6 @@ class Save extends Common {
       this.inputCustomerCookie();
     }
     if (res == 200) {
-      this.writePlatFormNo(this.data.platform);
       console.log(this.chalk.greenBright(`保配置存成功`));
     }
   }
@@ -93,11 +91,11 @@ class Save extends Common {
   }
 
   getLocalConfig(platformName) {
-    return new Promise(resolve => {
+    return new Promise((resolve, reject) => {
       this.fs.readFile(`${process.cwd()}/${this.PUTPATH}/${platformName}-config.json`, 'UTF-8', (err, data) => {
         if (err) {
-          resolve(false);
-          // throw err;
+          console.error(this.chalk.redBright(`${process.cwd()}/${this.PUTPATH}/${platformName}-config.json 文件不存在`));
+          return;
         }
         if (!data) {
           resolve(false);
@@ -107,13 +105,6 @@ class Save extends Common {
         resolve(JSON.parse(data));;
       });
     });
-  }
-
-  writePlatFormNo(platformNo) {
-    if (!this.COOKIEHOST.platform.includes(platformNo)) {
-      this.COOKIEHOST.platform = [... this.COOKIEHOST.platform, platformNo];
-      this.writeFile(JSON.stringify(this.COOKIEHOST), '/filter-cookie-config.json')
-    }
   }
 }
 
