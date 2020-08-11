@@ -30,10 +30,7 @@ class Common {
         });
     }
 
-    isExistsJson() {
-        return this.fs.existsSync(`${process.cwd()}/json`)
-    }
-
+    
     inputCustomerCookie() {
         this.inquirer.prompt([
             {
@@ -49,10 +46,26 @@ class Common {
             this.init();
         });
     }
-
+    
     async writeCookie(cookie) {
         this.COOKIEHOST[this.ENV].cookie = cookie;
         await this.writeFile(JSON.stringify(this.COOKIEHOST), '/filter-cookie-config.json');
+    }
+    
+    isExistsJson(putPath) {
+        return this.fs.existsSync(`${process.cwd()}/${putPath}`);
+    }
+
+    async mkdir(putPath) {
+        const [filePath1,] = putPath.split('/');
+        if (!this.isExistsJson(filePath1)) {
+            this.fs.mkdirSync(`${process.cwd()}/${filePath1}`);
+        }
+
+        if (!this.isExistsJson(putPath)) {
+            this.fs.mkdirSync(`${process.cwd()}/${putPath}`);
+        }
+
     }
 }
 

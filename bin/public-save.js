@@ -4,10 +4,10 @@ class Save extends Common {
   ) {
     super();
     this.data = {};
+    this.PUTPATH = '';
   }
 
   async init() {
-    const LOCALCONFIGLIST = await this.getLocalModifyConfig();
     const promptList = [
       {
         type: 'list',
@@ -15,14 +15,15 @@ class Save extends Common {
         name: 'env',
         choices: [`测试(${this.COOKIEHOST['测试'].host})`, `正式(${this.COOKIEHOST['正式'].host})`,],
         filter: (val) => {
-          return val.includes('测试') ? '测试' : '正式'
+          console.log('测试');
+          return val.includes('测试') ? '测试' : '正式';
         }
       },
       {
         type: 'list',
         message: '请选择平台:',
-        name: 'platformConfigFile',
-        choices: LOCALCONFIGLIST
+        name: 'platformName',
+        choices: this.COOKIEHOST.platform.map(v => v.label)
       }
     ];
     this.inquirer.prompt(promptList).then(async (answers) => {
@@ -30,8 +31,10 @@ class Save extends Common {
       this.COOKIE = this.COOKIEHOST[answers.env].cookie;
       this.HOST = this.COOKIEHOST[answers.env].host;
       this.PORT = this.COOKIEHOST[answers.env].port;
-      this.data = await this.getLocalConfig(answers.platformConfigFile);
-      this.saveConfig();
+      this.PUTPATH = this.COOKIEHOST.outPut.replace('{env}', `${this.ENV}`);
+      this.data = await this.getLocalConfig(answers.platformName);
+      console.log(this.data);
+      // this.saveConfig();
     })
   }
 
@@ -89,27 +92,16 @@ class Save extends Common {
 
   }
 
-  getLocalModifyConfig() {
-    return new Promise((resolve, reject) => {
-      this.fs.readdir(`${process.cwd()}/json`, (err, data) => {
-        if (err) {
-          throw err;
-        }
-        resolve(data && data.filter(v => v.includes('.json')));
-      })
-    })
-  }
-
-  getLocalConfig(platformConfigFile) {
+  getLocalConfig(platformName) {
     return new Promise(resolve => {
-      this.fs.readFile(`${process.cwd()}/json/${platformConfigFile}`, 'UTF-8', (err, data) => {
+      this.fs.readFile(`${process.cwd()}/${this.PUTPATH}/${platformName}-config.json`, 'UTF-8', (err, data) => {
         if (err) {
           resolve(false);
-          throw err;
+          // throw err;
         }
         if (!data) {
           resolve(false);
-          console.error(chalk.redBright(`${platformConfigFile}保存的配置为空`));
+          console.error(this.chalk.redBright(`${platformName}保存的配置为空`));
           return;
         }
         resolve(JSON.parse(data));;
@@ -120,7 +112,7 @@ class Save extends Common {
   writePlatFormNo(platformNo) {
     if (!this.COOKIEHOST.platform.includes(platformNo)) {
       this.COOKIEHOST.platform = [... this.COOKIEHOST.platform, platformNo];
-      this.writeFile(JSON.stringify(this.COOKIEHOST), '/cookieconfig.json')
+      this.writeFile(JSON.stringify(this.COOKIEHOST), '/filter-cookie-config.json')
     }
   }
 }

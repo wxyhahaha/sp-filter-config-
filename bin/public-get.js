@@ -4,6 +4,7 @@ class Get extends Common {
     constructor() {
         super();
         this.platform = '';
+        this.PUTPATH = '';
     }
     init() {
         const promptList = [
@@ -13,14 +14,17 @@ class Get extends Common {
                 name: 'env',
                 choices: [`测试(${this.COOKIEHOST['测试'].host})`, `正式(${this.COOKIEHOST['正式'].host})`,],
                 filter: (val) => {
-                    return val.includes('测试') ? '测试' : '正式'
+                    return val.includes('测试') ? '测试' : '正式';
                 }
             },
             {
                 type: 'list',
                 message: '请选择平台:',
                 name: 'platform',
-                choices: this.COOKIEHOST.platform
+                choices: this.COOKIEHOST.platform.map(v => v.label),
+                filter: (val) => {
+                    return this.COOKIEHOST.platform.find(v => v.label === val).value;
+                }
             }
         ];
         this.inquirer.prompt(promptList).then(answers => {
@@ -28,19 +32,20 @@ class Get extends Common {
             this.COOKIE = this.COOKIEHOST[answers.env].cookie;
             this.PORT = this.COOKIEHOST[answers.env].port;
             this.HOST = this.COOKIEHOST[answers.env].host
+            this.PUTPATH = this.COOKIEHOST.outPut.replace('{env}', `${this.ENV}`);
             this.platform = answers.platform;
             this.createConfigFile();
         })
     }
 
     async writeJsonFile(data) {
-        if (!this.isExistsJson()) {
-            this.fs.mkdirSync(`${process.cwd()}/json`)
+        if (!this.isExistsJson(this.PUTPATH)) {
+            await this.mkdir(this.PUTPATH);
         }
         if (JSON.parse(data).platformname) {
-            const res = await this.writeFile(data, `/json/${JSON.parse(data).platformname}-config.json`);
+            const res = await this.writeFile(data, `/${this.PUTPATH}/${JSON.parse(data).platformname}-config.json`);
             if (res) {
-                console.log(this.chalk.green(`${JSON.parse(data).platformname}-config.json 创建成功`));
+                console.log(this.chalk.green(`${process.cwd()}/${this.PUTPATH}/${JSON.parse(data).platformname}-config.json 创建成功`));
             }
         } else {
             console.error(this.chalk.redBright(`${JSON.parse(data).platform}对应没有平台名，创建失败`));
