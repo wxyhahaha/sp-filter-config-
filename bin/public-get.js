@@ -5,6 +5,7 @@ class Get extends Common {
         super();
         this.platform = '';
         this.PUTPATH = '';
+        this.REQUESTPATH = '';
     }
     init() {
         const promptList = [
@@ -32,6 +33,7 @@ class Get extends Common {
             this.COOKIE = this.COOKIEHOST[answers.env].cookie;
             this.PORT = this.COOKIEHOST[answers.env].port;
             this.HOST = this.COOKIEHOST[answers.env].host
+            this.REQUESTPATH = this.COOKIEHOST[answers.env].path.get;
             this.PUTPATH = this.COOKIEHOST.outPut.replace('{env}', `${this.ENV}`);
             this.platform = answers.platform;
             this.createConfigFile();
@@ -73,7 +75,7 @@ class Get extends Common {
                 host: this.HOST,
                 port: this.PORT,   // path为域名时，不加port
                 method: 'GET',
-                path: '/listing/sku_on_sale/get_filter_config?platformCode=' + platform + '&userOaId=-1',
+                path: `${this.REQUESTPATH}?platformCode=${platform}&userOaId=-1`,
                 headers: {
                     "Content-Type": 'application/json',
                     "Cookie": this.COOKIE,

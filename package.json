@@ -1,6 +1,6 @@
 {
   "name": "sp-fitler-config",
-  "version": "2.2.0",
+  "version": "2.2.1",
   "description": "安装 node \r 获取网络配置命令 node public-get\r 修改配置命令 node public-save",
   "main": "getconfig.js",
   "scripts": {

@@ -5,6 +5,7 @@ class Save extends Common {
     super();
     this.data = {};
     this.PUTPATH = '';
+    this.REQUESTPATH = '';
   }
 
   async init() {
@@ -31,6 +32,7 @@ class Save extends Common {
       this.COOKIE = this.COOKIEHOST[answers.env].cookie;
       this.HOST = this.COOKIEHOST[answers.env].host;
       this.PORT = this.COOKIEHOST[answers.env].port;
+      this.REQUESTPATH = this.COOKIEHOST[answers.env].path.save;
       this.PUTPATH = this.COOKIEHOST.outPut.replace('{env}', `${this.ENV}`);
       this.data = await this.getLocalConfig(answers.platformName);
       this.saveConfig();
@@ -44,7 +46,7 @@ class Save extends Common {
       this.inputCustomerCookie();
     }
     if (res == 200) {
-      console.log(this.chalk.greenBright(`保配置存成功`));
+      console.log(this.chalk.greenBright(`${this.data.platformname}保存成功`));
     }
   }
 
@@ -53,9 +55,9 @@ class Save extends Common {
       const data = this.data;
       const opt = {
         host: this.HOST,
-        port: this.PORT,   // path为域名时，不加port
+        port: this.PORT,
         method: 'POST',
-        path: '/listing/sku_on_sale/save_filterconfig',
+        path: this.REQUESTPATH,
         headers: {
           "Content-Type": 'application/json',
           "Cookie": this.COOKIE,

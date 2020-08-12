@@ -4,6 +4,7 @@ const inquirer = require('inquirer');
 const COOKIEHOST = require(`${process.cwd()}/filter-cookie-config.json`);
 const chalk = require('chalk');
 const ora = require('ora');
+const path = require('path');
 class Common {
     constructor() {
         this.http = http;
@@ -16,6 +17,7 @@ class Common {
         this.COOKIE = "";
         this.ENV = '';
         this.PORT = '';
+        this.path = path;
     }
 
     writeFile(data, path) {
@@ -57,15 +59,14 @@ class Common {
     }
 
     async mkdir(putPath) {
-        const [filePath1,] = putPath.split('/');
-        if (!this.isExistsJson(filePath1)) {
-            this.fs.mkdirSync(`${process.cwd()}/${filePath1}`);
+        if (this.fs.existsSync(putPath)) {
+            return true;
+        } else {
+            if (this.mkdir(this.path.dirname(putPath))) {
+                this.fs.mkdirSync(putPath);
+                return true;
+            }
         }
-
-        if (!this.isExistsJson(putPath)) {
-            this.fs.mkdirSync(`${process.cwd()}/${putPath}`);
-        }
-
     }
 }
 
