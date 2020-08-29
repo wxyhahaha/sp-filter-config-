@@ -41,9 +41,7 @@ class Get extends Common {
     }
 
     async writeJsonFile(data) {
-        if (!this.isExistsJson(this.PUTPATH)) {
-            await this.mkdir(this.PUTPATH);
-        }
+        await this.mkdir(this.PUTPATH);
         if (JSON.parse(data).platformname) {
             const res = await this.writeFile(data, `/${this.PUTPATH}/${JSON.parse(data).platformname}-config.json`);
             if (res) {

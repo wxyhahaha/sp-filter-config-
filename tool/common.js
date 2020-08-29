@@ -53,10 +53,6 @@ class Common {
         this.COOKIEHOST[this.ENV].cookie = cookie;
         await this.writeFile(JSON.stringify(this.COOKIEHOST), '/filter-cookie-config.json');
     }
-    
-    isExistsJson(putPath) {
-        return this.fs.existsSync(`${process.cwd()}/${putPath}`);
-    }
 
     async mkdir(putPath) {
         if (this.fs.existsSync(putPath)) {

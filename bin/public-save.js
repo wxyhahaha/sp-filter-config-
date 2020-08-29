@@ -46,7 +46,7 @@ class Save extends Common {
       this.inputCustomerCookie();
     }
     if (res == 200) {
-      console.log(this.chalk.greenBright(`${this.data.platformname}保存成功`));
+      console.log(this.chalk.greenBright(`${this.PUTPATH}/${this.data.platformname}-config.json保存成功`));
     }
   }
 
@@ -77,7 +77,7 @@ class Save extends Common {
               resolve(401);
               return;
             }
-            return console.log('body:', chalk.redBright(body));
+            return console.log('body:', this.chalk.redBright(body));
           }
           spinner.stop();
           resolve(200);

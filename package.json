@@ -1,14 +1,16 @@
 {
   "name": "sp-fitler-config",
-  "version": "2.2.1",
+  "version": "2.3.1",
   "description": "安装 node \r 获取网络配置命令 node public-get\r 修改配置命令 node public-save",
-  "main": "getconfig.js",
+  "main": "bin/public.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "tsc && node bin/public.js",
+    "public": "node bin/public.js"
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@types/node": "^14.0.27",
     "commander": "^5.1.0",
     "inquirer": "7.1.0",
     "ora": "4.0.4"
