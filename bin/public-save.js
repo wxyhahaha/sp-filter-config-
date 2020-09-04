@@ -16,7 +16,6 @@ class Save extends Common {
         name: 'env',
         choices: [`测试(${this.COOKIEHOST['测试'].host})`, `正式(${this.COOKIEHOST['正式'].host})`,],
         filter: (val) => {
-          console.log('测试');
           return val.includes('测试') ? '测试' : '正式';
         }
       },
@@ -39,6 +38,35 @@ class Save extends Common {
     })
   }
 
+  async onekeySaveAllPlatformJson() {
+    const promptList = [
+      {
+        type: 'list',
+        message: '请选择获取测试环境还是正式环境:',
+        name: 'env',
+        choices: [`测试(${this.COOKIEHOST['测试'].host})`, `正式(${this.COOKIEHOST['正式'].host})`,],
+        filter: (val) => {
+          return val.includes('测试') ? '测试' : '正式';
+        }
+      }
+    ];
+    this.inquirer.prompt(promptList).then(async (answers) => {
+      this.ENV = answers.env;
+      this.COOKIE = this.COOKIEHOST[answers.env].cookie;
+      this.HOST = this.COOKIEHOST[answers.env].host;
+      this.PORT = this.COOKIEHOST[answers.env].port;
+      this.REQUESTPATH = this.COOKIEHOST[answers.env].path.save;
+      this.PUTPATH = this.COOKIEHOST.outPut.replace('{env}', `${this.ENV}`);
+      for (const item of this.COOKIEHOST.platform) {
+        this.data = await this.getLocalConfig(item.label);
+        const res = await this.saveConfig();
+        if (res === 401) {
+          return;
+        }
+      }
+    })
+  }
+
   async saveConfig() {
     const res = await this.request();
     if (res == 401) {
@@ -46,13 +74,18 @@ class Save extends Common {
       this.inputCustomerCookie();
     }
     if (res == 200) {
-      console.log(this.chalk.greenBright(`${this.PUTPATH}/${this.data.platformname}-config.json保存成功`));
+      console.log(this.chalk.greenBright(`${process.cwd()}/${this.PUTPATH}/${this.data.platformname}-config.json保存成功\n`));
     }
+    return res;
   }
 
   request() {
     return new Promise(resolve => {
       const data = this.data;
+      if (!data) {
+        resolve(false);
+        return;
+      }
       const opt = {
         host: this.HOST,
         port: this.PORT,
@@ -71,15 +104,14 @@ class Save extends Common {
         res.on('data', (data) => {
           body += data;
         }).on('end', async () => {
+          spinner.stop();
           if (!JSON.parse(body).success) {
             if (body.includes('401')) {
-              spinner.stop();
               resolve(401);
               return;
             }
             return console.log('body:', this.chalk.redBright(body));
           }
-          spinner.stop();
           resolve(200);
         });
       }).on('error', (e) => {
@@ -96,12 +128,13 @@ class Save extends Common {
     return new Promise((resolve, reject) => {
       this.fs.readFile(`${process.cwd()}/${this.PUTPATH}/${platformName}-config.json`, 'UTF-8', (err, data) => {
         if (err) {
-          console.error(this.chalk.redBright(`${process.cwd()}/${this.PUTPATH}/${platformName}-config.json 文件不存在`));
+          console.error(this.chalk.redBright(`${process.cwd()}/${this.PUTPATH}/${platformName}-config.json 文件不存在\n`));
+          resolve(false);
           return;
         }
         if (!data) {
+          console.error(this.chalk.redBright(`${platformName}保存的配置为空\n`));
           resolve(false);
-          console.error(this.chalk.redBright(`${platformName}保存的配置为空`));
           return;
         }
         resolve(JSON.parse(data));;
