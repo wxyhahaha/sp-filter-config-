@@ -22,7 +22,7 @@ class Common {
 
     writeFile(data, path) {
         return new Promise((resolve, reject) => {
-            this.fs.writeFile(`${process.cwd()}/${path}`, data, null, (err) => {
+            this.fs.writeFile(`${process.cwd()}/${path}`, JSON.stringify(JSON.parse(data), null, '  '), null, (err) => {
                 if (err) {
                     reject(err);
                     throw err;
@@ -51,7 +51,7 @@ class Common {
     
     async writeCookie(cookie) {
         this.COOKIEHOST[this.ENV].cookie = cookie;
-        await this.writeFile(JSON.stringify(this.COOKIEHOST), '/filter-cookie-config.json');
+        await this.writeFile(this.COOKIEHOST, '/filter-cookie-config.json');
     }
 
     async mkdir(putPath) {

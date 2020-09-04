@@ -13,33 +13,38 @@ npm i sp-fitler-config -g
 | 命令 | 说明 |
 | :--- | :--- |
 | `public` | 查看所有命令 |
-| `public get` | 获取网络上json |
-| `public save` | 提交json |
+| `public get|g` | 获取配置 |
+| `public save|s` | 提交配置 |
+| `public save-all|sa` | 提交所有配置 |
+| `public get-all|ga` | 保存所有配置 |
 # filter-cookie-json模板
-{
-  "platform": [
-    {
-      "label": "xxx",
-      "value": xxx
-    }
-  ],
-  "测试": {
-    "cookie": "Authorization=\"Bearer AT-6839-SpEL0XpX8g1UewaeP3lkcRSK4Hi9xb4l\"",
-    "host": "192.168.1.146",
-    "port": "8924",
-    "path": {
-      "get": "/listing/sku_on_sale/get_filter_config",
-      "save": "/listing/sku_on_sale/save_filterconfig"
-    }
-  },
-  "正式": {
-    "cookie": "Authorization=\"Bearer AT-154870-gZZHZMbsU8T-Vx1KqwWown838UUgWX0Y\"",
-    "host": "apisp.banggood.cn",
-    "port": "",
-    "path": {
-      "get": "/listing-back/sku_on_sale/get_filter_config",
-      "save": "/listing-back/sku_on_sale/save_filterconfig"
-    }
-  },
-  "outPut": "config-json/{env}"
-}
+{  
+  "platform": [  
+    {  
+      "label": "xxx",  
+      "value": xxx  
+    }  
+  ],  
+  "测试": {  
+    "cookie": "Authorization=\"Bearer AT-6839-SpEL0XpX8g1UewaeP3lkcRSK4Hi9xb4l\"",  
+    "host": "192.168.1.146",  
+    "port": "8924",  
+    "path": {  
+      "get": "/listing/sku_on_sale/get_filter_config",  
+      "save": "/listing/sku_on_sale/save_filterconfig"  
+    }  
+  },  
+  "正式": {  
+    "cookie": "Authorization=\"Bearer AT-154870-gZZHZMbsU8T-Vx1KqwWown838UUgWX0Y\"",  
+    "host": "apisp.banggood.cn",  
+    "port": "",  
+    "path": {  
+      "get": "/listing-back/sku_on_sale/get_filter_config",  
+      "save": "/listing-back/sku_on_sale/save_filterconfig"  
+    }  
+  },  
+  "outPut": "config-json/{env}"  
+}  
+# 历史版本
+`2.3.3`: 增加获取所有配置，保存所有配置功能  
+`2.3.4`: 获取配置自动格式化  
