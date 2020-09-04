@@ -18,7 +18,9 @@ npm i sp-fitler-config -g
 | `public save-all|sa` | 提交所有配置 |
 | `public get-all|ga` | 保存所有配置 |
 # filter-cookie-json模板
-{  
+<pre>
+    <code>
+        {  
   "platform": [  
     {  
       "label": "xxx",  
@@ -45,6 +47,9 @@ npm i sp-fitler-config -g
   },  
   "outPut": "config-json/{env}"  
 }  
+    </code>
+</pre>
+
 # 历史版本
 `2.3.3`: 增加获取所有配置，保存所有配置功能  
 `2.3.4`: 获取配置自动格式化  
