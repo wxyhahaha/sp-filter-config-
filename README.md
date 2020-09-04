@@ -14,9 +14,9 @@ npm i sp-fitler-config -g
 | :--- | :--- |
 | `public` | 查看所有命令 |
 | `public get` | 获取配置 |
-| `public save` | 提交配置 |
-| `public save-all` | 提交所有配置 |
-| `public get-all` | 保存所有配置 |
+| `public save` | 保存配置 |
+| `public save-all` | 保存所有配置 |
+| `public get-all` | 获取所有配置 |
 # filter-cookie-json模板
 <pre>
     <code>

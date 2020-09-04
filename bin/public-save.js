@@ -99,7 +99,7 @@ class Save extends Common {
       };
       const dataString = JSON.stringify({ platformNo: data.platform, filterString: JSON.stringify(data), userId: '-1' });
       let body = '';
-      const spinner = this.ora(this.chalk.blue(`正在保存${data.platformname}的配置\n`)).start();
+      const spinner = this.ora(this.chalk.blue(`\n`)).start();
       const req = this.http.request(opt, (res) => {
         res.on('data', (data) => {
           body += data;
