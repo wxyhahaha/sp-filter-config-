@@ -51,7 +51,7 @@ class Common {
     
     async writeCookie(cookie) {
         this.COOKIEHOST[this.ENV].cookie = cookie;
-        await this.writeFile(this.COOKIEHOST, '/filter-cookie-config.json');
+        await this.writeFile(JSON.stringify(this.COOKIEHOST), '/filter-cookie-config.json');
     }
 
     async mkdir(putPath) {
