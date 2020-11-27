@@ -5,6 +5,8 @@ const COOKIEHOST = require(`${process.cwd()}/filter-cookie-config.json`);
 const chalk = require('chalk');
 const ora = require('ora');
 const path = require('path');
+const unirest = require('unirest');
+
 class Common {
     constructor() {
         this.http = http;
@@ -13,11 +15,10 @@ class Common {
         this.inquirer = inquirer;
         this.chalk = chalk;
         this.ora = ora;
-        this.HOST = "";
         this.COOKIE = "";
         this.ENV = '';
-        this.PORT = '';
         this.path = path;
+        this.unirest = unirest;
     }
 
     writeFile(data, path) {
@@ -42,7 +43,6 @@ class Common {
                 default: "find youself" // 默认值
             }
         ]).then(async (input) => {
-            console.log(input.authorizationcookie);
             await this.writeCookie(input.authorizationcookie);
             this.COOKIEHOST = require(`${process.cwd()}/filter-cookie-config.json`);
             this.init();

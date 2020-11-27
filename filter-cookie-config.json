@@ -43,24 +43,48 @@
     {
       "label": "B2W",
       "value": 61
+    },
+    {
+      "label": "Joybuy",
+      "value": 89
+    },
+    {
+      "label": "Daraz",
+      "value": 54
+    },
+    {
+      "label": "MercadoLibre",
+      "value": 37
+    },
+    {
+      "label": "Realde",
+      "value": 69
+    },
+    {
+      "label": "Allegro",
+      "value": 68
+    },
+    {
+      "label": "HiSelling",
+      "value": 46
     }
   ],
   "测试": {
-    "cookie": "Authorization=\"Bearer AT-16519-cEa5DzLp2VSQVSK8peIDTUi1kXGCc_-e\"",
+    "cookie": "Authorization=\"Bearer AT-38939-ZWQ4VRWXEQBxzJxLu-iHxEothlKnggjZ\"",
     "host": "192.168.1.146",
-    "port": "8924",
-    "path": {
-      "get": "/listing/sku_on_sale/get_filter_config",
-      "save": "/listing/sku_on_sale/save_filterconfig"
+    "port": "8429",
+    "requestUrl": {
+      "get": "http://192.168.1.146:8429/listing/sku_on_sale/get_filter_config",
+      "save": "http://192.168.1.146:8429/listing/sku_on_sale/save_filterconfig"
     }
   },
   "正式": {
-    "cookie": "Authorization=\"Bearer AT-141665-_k79CyeCcko1sdFSLDuCjLJN29142SEQ\"",
+    "cookie": "Authorization=\"Bearer AT-47013-Ir4wzNCH7UATi18Mf_Q136NgCSt12uXX\"",
     "host": "apisp.banggood.cn",
     "port": "",
-    "path": {
-      "get": "/listing-back/sku_on_sale/get_filter_config",
-      "save": "/listing-back/sku_on_sale/save_filterconfig"
+    "requestUrl": {
+      "get": "https://apisp.banggood.cn/listing/sku_on_sale/get_filter_config",
+      "save": "https://apisp.banggood.cn/listing/sku_on_sale/save_filterconfig"
     }
   },
   "outPut": "config-json/{env}"

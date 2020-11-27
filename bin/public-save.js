@@ -5,7 +5,7 @@ class Save extends Common {
     super();
     this.data = {};
     this.PUTPATH = '';
-    this.REQUESTPATH = '';
+    this.REQUESTURL = '';
   }
 
   async init() {
@@ -29,9 +29,7 @@ class Save extends Common {
     this.inquirer.prompt(promptList).then(async (answers) => {
       this.ENV = answers.env;
       this.COOKIE = this.COOKIEHOST[answers.env].cookie;
-      this.HOST = this.COOKIEHOST[answers.env].host;
-      this.PORT = this.COOKIEHOST[answers.env].port;
-      this.REQUESTPATH = this.COOKIEHOST[answers.env].path.save;
+      this.REQUESTURL = this.COOKIEHOST[answers.env].requestUrl.save;
       this.PUTPATH = this.COOKIEHOST.outPut.replace('{env}', `${this.ENV}`);
       this.data = await this.getLocalConfig(answers.platformName);
       this.saveConfig();
@@ -53,9 +51,7 @@ class Save extends Common {
     this.inquirer.prompt(promptList).then(async (answers) => {
       this.ENV = answers.env;
       this.COOKIE = this.COOKIEHOST[answers.env].cookie;
-      this.HOST = this.COOKIEHOST[answers.env].host;
-      this.PORT = this.COOKIEHOST[answers.env].port;
-      this.REQUESTPATH = this.COOKIEHOST[answers.env].path.save;
+      this.REQUESTURL = this.COOKIEHOST[answers.env].requestUrl.save;
       this.PUTPATH = this.COOKIEHOST.outPut.replace('{env}', `${this.ENV}`);
       for (const item of this.COOKIEHOST.platform) {
         this.data = await this.getLocalConfig(item.label);
@@ -86,40 +82,33 @@ class Save extends Common {
         resolve(false);
         return;
       }
-      const opt = {
-        host: this.HOST,
-        port: this.PORT,
-        method: 'POST',
-        path: this.REQUESTPATH,
-        headers: {
-          "Content-Type": 'application/json',
+      const spinner = this.ora(this.chalk.blue(`\n`)).start();
+      const params = {
+        platformNo: data.platform,
+        filterString: JSON.stringify(data),
+        userId: -1
+      };
+      this.unirest('POST', this.REQUESTURL)
+        .headers({
+          'Content-Type': 'application/json',
           "Cookie": this.COOKIE,
           "platformNo": data.platform
-        }
-      };
-      const dataString = JSON.stringify({ platformNo: data.platform, filterString: JSON.stringify(data), userId: '-1' });
-      let body = '';
-      const spinner = this.ora(this.chalk.blue(`\n`)).start();
-      const req = this.http.request(opt, (res) => {
-        res.on('data', (data) => {
-          body += data;
-        }).on('end', async () => {
+        })
+        .send(params)
+        .end((res) => {
           spinner.stop();
-          if (!JSON.parse(body).success) {
-            if (body.includes('401')) {
+          if (res.error) {
+            return console.log(this.chalk.redBright("error: " + res.error));
+          };
+          if (!res.raw_body.success) {
+            if (res.raw_body.error_msg.includes('401')) {
               resolve(401);
               return;
             }
-            return console.log('body:', this.chalk.redBright(body));
+            return console.log('body:', this.chalk.redBright(res.raw_body));
           }
           resolve(200);
         });
-      }).on('error', (e) => {
-        spinner.stop();
-        console.log(this.chalk.redBright("error: " + e.message));
-      })
-      req.write(dataString);
-      req.end();
     });
 
   }

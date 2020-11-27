@@ -5,7 +5,7 @@ class Get extends Common {
         super();
         this.platform = '';
         this.PUTPATH = '';
-        this.REQUESTPATH = '';
+        this.REQUESTURL = '';
     }
 
     init() {
@@ -32,9 +32,7 @@ class Get extends Common {
         this.inquirer.prompt(promptList).then(answers => {
             this.ENV = answers.env;
             this.COOKIE = this.COOKIEHOST[answers.env].cookie;
-            this.PORT = this.COOKIEHOST[answers.env].port;
-            this.HOST = this.COOKIEHOST[answers.env].host
-            this.REQUESTPATH = this.COOKIEHOST[answers.env].path.get;
+            this.REQUESTURL = this.COOKIEHOST[answers.env].requestUrl.get;
             this.PUTPATH = this.COOKIEHOST.outPut.replace('{env}', `${this.ENV}`);
             this.platform = answers.platform;
             this.createConfigFile();
@@ -56,9 +54,7 @@ class Get extends Common {
         this.inquirer.prompt(promptList).then(async (answers) => {
             this.ENV = answers.env;
             this.COOKIE = this.COOKIEHOST[answers.env].cookie;
-            this.PORT = this.COOKIEHOST[answers.env].port;
-            this.HOST = this.COOKIEHOST[answers.env].host
-            this.REQUESTPATH = this.COOKIEHOST[answers.env].path.get;
+            this.REQUESTURL = this.COOKIEHOST[answers.env].requestUrl.get;
             this.PUTPATH = this.COOKIEHOST.outPut.replace('{env}', `${this.ENV}`);
             for (const item of this.COOKIEHOST.platform) {
                 this.platform = item.value;
@@ -95,46 +91,35 @@ class Get extends Common {
 
     async getConfig() {
         return await this.request();
-    } 
+    }
 
-    request() {
+    async request() {
         const platform = this.platform;
         return new Promise(resolve => {
-            const opt = {
-                host: this.HOST,
-                port: this.PORT,   // path为域名时，不加port
-                method: 'GET',
-                path: `${this.REQUESTPATH}?platformCode=${platform}&userOaId=-1`,
-                headers: {
-                    "Content-Type": 'application/json',
+            const spinner = this.ora(this.chalk.blue(`\n`)).start();
+            this.unirest('GET', `${this.REQUESTURL}?platformCode=${platform}&userOaId=-1`)
+                .headers({
+                    'Content-Type': 'application/json',
                     "Cookie": this.COOKIE,
                     "platformNo": platform
-                }
-            }
-            let body = '';
-            const spinner = this.ora(this.chalk.blue(`\n`)).start();
-            const req = this.http.request(opt, (res) => {
-                res.on('data', (data) => {
-                    body += data;
-                }).on('end', async () => {
+                })
+                .end((res) => {
                     spinner.stop();
-                    if (!JSON.parse(body).success) {
-                        if (body.includes('401')) {
+                    if (res.error) {
+                        return console.log(this.chalk.redBright("error: " + res.error));
+                    };
+                    if (!JSON.parse(res.raw_body).success) {
+                        if (JSON.parse(res.raw_body).error_msg.includes('401')) {
                             resolve(401);
                             return;
                         }
-                        return console.log('body:', this.chalk.redBright(body));
+                        return console.log('body:', this.chalk.redBright(res.raw_body));
                     }
-                    if (!JSON.parse(body).result) {
+                    if (!JSON.parse(res.raw_body).result) {
                         return console.log(this.chalk.redBright(`${platform}配置为空\n`));
                     }
-                    resolve(JSON.parse(body).result);
+                    resolve(JSON.parse(res.raw_body).result);
                 });
-            }).on('error', (e) => {
-                spinner.stop();
-                console.log("error: " + e.message);
-            })
-            req.end();
         });
     }
 }
