@@ -101,7 +101,7 @@ class Save extends Common {
             return console.log(this.chalk.redBright("error: " + res.error));
           };
           if (!res.raw_body.success) {
-            if (res.raw_body.error_msg.includes('401')) {
+            if (res.raw_body.error_infos[0].code == 401) {
               resolve(401);
               return;
             }
