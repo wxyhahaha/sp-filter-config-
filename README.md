@@ -120,3 +120,4 @@ npm i sp-fitler-config -g
 `2.3.5`: 修复读写cookie  
 `2.3.6`: 修复保存socket hang up 问题
 `2.3.7`: 更换请求api修复socket hang up 问题，调整filter-cookie-config.json配置
+`2.3.8`: 请求响应修复
