@@ -109,7 +109,7 @@ class Get extends Common {
                         return console.log(this.chalk.redBright("error: " + res.error));
                     };
                     if (!JSON.parse(res.raw_body).success) {
-                        if (JSON.parse(res.raw_body).error_infos[0].code == 401) {
+                        if (JSON.parse(res.raw_body).error_infos[0].code == 401 || res.raw_body.error_msg.includes('401')) {
                             resolve(401);
                             return;
                         }
