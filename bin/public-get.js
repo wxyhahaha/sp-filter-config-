@@ -6,6 +6,7 @@ class Get extends Common {
         this.platform = '';
         this.PUTPATH = '';
         this.REQUESTURL = '';
+        this.HOST = '';
     }
 
     init() {
@@ -32,6 +33,7 @@ class Get extends Common {
         this.inquirer.prompt(promptList).then(answers => {
             this.ENV = answers.env;
             this.COOKIE = this.COOKIEHOST[answers.env].cookie;
+            this.HOST = this.COOKIEHOST[answers.env].host;
             this.REQUESTURL = this.COOKIEHOST[answers.env].requestUrl.get;
             this.PUTPATH = this.COOKIEHOST.outPut.replace('{env}', `${this.ENV}`);
             this.platform = answers.platform;
@@ -55,6 +57,7 @@ class Get extends Common {
             this.ENV = answers.env;
             this.COOKIE = this.COOKIEHOST[answers.env].cookie;
             this.REQUESTURL = this.COOKIEHOST[answers.env].requestUrl.get;
+            this.HOST = this.COOKIEHOST[answers.env].host;
             this.PUTPATH = this.COOKIEHOST.outPut.replace('{env}', `${this.ENV}`);
             for (const item of this.COOKIEHOST.platform) {
                 this.platform = item.value;
@@ -109,7 +112,7 @@ class Get extends Common {
                         return console.log(this.chalk.redBright("error: " + res.error));
                     };
                     if (!JSON.parse(res.raw_body).success) {
-                        if (JSON.parse(res.raw_body).error_infos[0].code == 401 || res.raw_body.error_msg.includes('401')) {
+                        if (JSON.parse(res.raw_body).error_infos[0].code == 401 || JSON.parse(res.raw_body).error_msg.includes('401')) {
                             resolve(401);
                             return;
                         }

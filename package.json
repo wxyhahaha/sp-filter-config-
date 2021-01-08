@@ -7,7 +7,7 @@
     "test": "tsc && node bin/public.js",
     "public": "node bin/public.js"
   },
-  "author": "",
+  "author": "wuxunyu",
   "license": "ISC",
   "dependencies": {
     "@types/node": "^14.0.27",

@@ -6,6 +6,7 @@ class Save extends Common {
     this.data = {};
     this.PUTPATH = '';
     this.REQUESTURL = '';
+    this.HOST = '';
   }
 
   async init() {
@@ -30,6 +31,7 @@ class Save extends Common {
       this.ENV = answers.env;
       this.COOKIE = this.COOKIEHOST[answers.env].cookie;
       this.REQUESTURL = this.COOKIEHOST[answers.env].requestUrl.save;
+      this.HOST = this.COOKIEHOST[answers.env].host;
       this.PUTPATH = this.COOKIEHOST.outPut.replace('{env}', `${this.ENV}`);
       this.data = await this.getLocalConfig(answers.platformName);
       this.saveConfig();
@@ -52,6 +54,7 @@ class Save extends Common {
       this.ENV = answers.env;
       this.COOKIE = this.COOKIEHOST[answers.env].cookie;
       this.REQUESTURL = this.COOKIEHOST[answers.env].requestUrl.save;
+      this.HOST = this.COOKIEHOST[answers.env].host;
       this.PUTPATH = this.COOKIEHOST.outPut.replace('{env}', `${this.ENV}`);
       for (const item of this.COOKIEHOST.platform) {
         this.data = await this.getLocalConfig(item.label);
@@ -101,7 +104,7 @@ class Save extends Common {
             return console.log(this.chalk.redBright("error: " + res.error));
           };
           if (!res.raw_body.success) {
-            if (res.raw_body.error_infos[0].code == 401 || res.raw_body.error_msg.includes('401')) {
+            if (res.raw_body.error_infos[0].code == 401 || JSON.parse(res.raw_body).error_msg.includes('401')) {
               resolve(401);
               return;
             }
