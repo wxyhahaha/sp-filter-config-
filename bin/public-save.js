@@ -6,6 +6,7 @@ class Save extends Common {
     this.data = {};
     this.PUTPATH = '';
     this.REQUESTURL = '';
+    this.GETREQUESTURL = '';
     this.HOST = '';
   }
 
@@ -31,10 +32,18 @@ class Save extends Common {
       this.ENV = answers.env;
       this.COOKIE = this.COOKIEHOST[answers.env].cookie;
       this.REQUESTURL = this.COOKIEHOST[answers.env].requestUrl.save;
+      this.GETREQUESTURL = this.COOKIEHOST[answers.env].requestUrl.get;
       this.HOST = this.COOKIEHOST[answers.env].host;
       this.PUTPATH = this.COOKIEHOST.outPut.replace('{env}', `${this.ENV}`);
       this.data = await this.getLocalConfig(answers.platformName);
-      this.saveConfig();
+      const cacheData = await this.readCache(answers.platformName);
+      const orignData = await this.getConfig(this.COOKIEHOST.platform.find(v => v.label === answers.platformName).value);
+      if(orignData != 401 && !await this.diffJson(cacheData, orignData)) {
+        const res = await this.saveConfig();
+        if (res) {
+          this.writeCache(this.data, `${process.env.LOCALAPPDATA}/${this.PUTPATH}`);
+        }
+      }
     })
   }
 
@@ -54,6 +63,7 @@ class Save extends Common {
       this.ENV = answers.env;
       this.COOKIE = this.COOKIEHOST[answers.env].cookie;
       this.REQUESTURL = this.COOKIEHOST[answers.env].requestUrl.save;
+      this.GETREQUESTURL = this.COOKIEHOST[answers.env].requestUrl.get;
       this.HOST = this.COOKIEHOST[answers.env].host;
       this.PUTPATH = this.COOKIEHOST.outPut.replace('{env}', `${this.ENV}`);
       for (const item of this.COOKIEHOST.platform) {
@@ -68,11 +78,7 @@ class Save extends Common {
 
   async saveConfig() {
     const res = await this.request();
-    if (res == 401) {
-      console.log('body:', this.chalk.redBright('登录超时，请重新登录'));
-      this.inputCustomerCookie();
-    }
-    if (res == 200) {
+    if (res != 401) {
       console.log(this.chalk.greenBright(`${process.cwd()}/${this.PUTPATH}/${this.data.platformname}-config.json保存成功\n`));
     }
     return res;
@@ -105,6 +111,8 @@ class Save extends Common {
           };
           if (!res.raw_body.success) {
             if (res.raw_body.error_infos[0].code == 401 || JSON.parse(res.raw_body).error_msg.includes('401')) {
+              console.log('body:', this.chalk.redBright('登录超时，请重新登录'));
+              this.inputCustomerCookie();
               resolve(401);
               return;
             }

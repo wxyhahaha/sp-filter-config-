@@ -23,90 +23,26 @@ npm i sp-fitler-config -g
 {
   "platform": [
     {
-      "label": "Lazada",
-      "value": 20
-    },
-    {
-      "label": "Jumia",
-      "value": 36
-    },
-    {
-      "label": "Koyye",
-      "value": 65
-    },
-    {
-      "label": "Lotte",
-      "value": 67
-    },
-    {
-      "label": "Cdiscount",
-      "value": 27
-    },
-    {
-      "label": "Shopee",
-      "value": 29
-    },
-    {
-      "label": "Joonmall",
-      "value": 63
-    },
-    {
-      "label": "Somyfo",
-      "value": 90
-    },
-    {
-      "label": "Shopify",
-      "value": 56
-    },
-    {
-      "label": "Wayfair",
-      "value": 76
-    },
-    {
-      "label": "B2W",
-      "value": 61
-    },
-    {
-      "label": "Joybuy",
-      "value": 89
-    },
-    {
-      "label": "Daraz",
-      "value": 54
-    },
-    {
-      "label": "MercadoLibre",
-      "value": 37
-    },
-    {
-      "label": "Realde",
-      "value": 69
-    },
-    {
-      "label": "Allegro",
-      "value": 68
-    },
-    {
-      "label": "HiSelling",
-      "value": 46
+      "label": "xx",
+      "value": xx
     }
   ],
   "测试": {
-    "cookie": "Authorization=\"Bearer AT-38939-ZWQ4VRWXEQBxzJxLu-iHxEothlKnggjZ\"",
+    "cookie": "Authorization=\"xx\"",
     "host": "192.168.1.146",
     "port": "8429",
     "requestUrl": {
-      "get": "http://192.168.1.146:8429/listing/sku_on_sale/get_filter_config",
-      "save": "http://192.168.1.146:8429/listing/sku_on_sale/save_filterconfig"
+      "get": "xx",
+      "save": "xx"
     }
   },
   "正式": {
-    "cookie": "Authorization=\"Bearer AT-47013-Ir4wzNCH7UATi18Mf_Q136NgCSt12uXX\"",
+    "cookie": "Authorization=\"xx\"",
     "host": "apisp.banggood.cn",
     "port": "",
     "requestUrl": {
-      "get": "https://apisp.banggood.cn/listing/sku_on_sale/get_filter_config",
-      "save": "https://apisp.banggood.cn/listing/sku_on_sale/save_filterconfig"
+      "get": "xx",
+      "save": "xx"
     }
   },
   "outPut": "config-json/{env}"
@@ -122,3 +58,4 @@ npm i sp-fitler-config -g
 `2.3.7`: 更换请求api修复socket hang up 问题，调整filter-cookie-config.json配置
 `2.3.8`: 请求响应修复
 `2.3.9`: 请求响应修复2
+`2.5.0`: 优化提交时多端提交问题，增加冲突提示
