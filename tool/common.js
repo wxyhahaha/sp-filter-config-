@@ -91,8 +91,8 @@ class Common {
             return false;
         }
         const Diff = require('diff');
-        oldData = typeof oldData === 'string' ? JSON.parse(oldData) : oldData;
-        newData = typeof newData === 'string' ? JSON.parse(newData) : newData;
+        oldData = typeof oldData === 'string' ? oldData : JSON.stringify(oldData);
+        newData = typeof newData === 'string' ? newData : JSON.stringify(newData);
         const diff = Diff.diffJson(oldData, newData);
         return await this.printDiffJsonInfo(diff);
     }
