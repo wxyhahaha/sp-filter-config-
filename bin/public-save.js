@@ -72,6 +72,9 @@ class Save extends Common {
         if (res === 401) {
           return;
         }
+        if (res) {
+          this.writeCache(this.data, `${process.env.LOCALAPPDATA}/${this.PUTPATH}`);
+        }
       }
     })
   }
