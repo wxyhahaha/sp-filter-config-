@@ -91,8 +91,8 @@ class Common {
             return false;
         }
         const Diff = require('diff');
-        oldData = typeof oldData === 'string' ? oldData : JSON.stringify(oldData);
-        newData = typeof newData === 'string' ? newData : JSON.stringify(newData);
+        oldData = typeof oldData === 'string' ? JSON.parse(oldData) : oldData;
+        newData = typeof newData === 'string' ? JSON.parse(newData) : newData;
         const diff = Diff.diffJson(oldData, newData);
         return await this.printDiffJsonInfo(diff);
     }
@@ -100,14 +100,24 @@ class Common {
     async printDiffJsonInfo(data) {
         let diff = false;
         if (data.some(v => v.added || v.removed)) {
-            let count = 0;
             data.forEach((v, i) => {
-                if (v.removed || !(v.removed && v.added)) {
-                    count += v.count;
-                }
-                if (v.removed) {
+                // 修改
+                if (v.removed && data[i + 1].added || v.added && data[i + 1].removed) {
                     diff = true;
-                    console.log(this.chalk.redBright(`\n第${count+1}行出现冲突：\n`), this.chalk.blue(`更改前：${v.value}\n`),this.chalk.yellow(`更改后：${data[i+1].value}\n`));
+                    console.log(this.chalk.redBright(`\n出现冲突：\n`), this.chalk.blue(`更改前：${v.value}\n`), this.chalk.yellow(`更改后：${data[i + 1].value}\n`));
+                }
+
+                // 新增
+                if (v.added && !data[i + 1].removed && !data[i - 1].removed) {
+                    diff = true;
+                    console.log(this.chalk.redBright(`\n出现冲突：\n`), this.chalk.yellow(`新增：${v.value}\n`));
+                    return;
+                }
+
+                // 删除
+                if (v.removed && !data[i + 1].added && !data[i - 1].added) {
+                    diff = true;
+                    console.log(this.chalk.redBright(`\n出现冲突：\n`), this.chalk.yellow(`删除：${v.value}\n`));
                 }
             });
         }
