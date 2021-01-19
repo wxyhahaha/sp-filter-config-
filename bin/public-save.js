@@ -94,6 +94,7 @@ class Save extends Common {
         resolve(false);
         return;
       }
+      data.updateDate = new Date().toLocaleString();
       const spinner = this.ora(this.chalk.blue(`\n`)).start();
       const params = {
         platformNo: data.platform,
